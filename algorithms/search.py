@@ -67,12 +67,48 @@ def breadthFirstSearch(problem: SearchProblem):
 
 
 def uniformCostSearch(problem: SearchProblem):
+
     """
     Search the node of least total cost first.
     """
+      
+    colaPrioridad = utils.PriorityQueue()
 
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    inicioRobot = problem.getStartState()
+    colaPrioridad.push((inicioRobot, [], 0),0)
+
+    # Diccionario con cada estado y sus costos
+    visitado = {}
+    visitado [inicioRobot] = 0 
+
+    while not colaPrioridad.isEmpty():
+
+        state, actions, costSoFar = colaPrioridad.pop()
+
+        if problem.isGoalState(state):
+            return actions
+
+        if state in visitado and costSoFar > visitado[state]:
+            continue
+
+        successors = problem.getSuccessors(state)
+        for successor in successors:
+            siguienteState = successor[0]
+            successorAction = successor[1]
+            siguenteCost = successor[2]
+
+            nuevoCosto = costSoFar + siguenteCost
+            nuevoAction = actions + [successorAction]
+
+            if siguienteState not in visitado:
+                visitado [siguienteState] = nuevoCosto
+                colaPrioridad.push((siguienteState, nuevoAction, nuevoCosto), nuevoCosto)
+
+            #Ya visitamos este estado pero encontramos un camino más barato
+            elif nuevoCosto < visitado [siguienteState]:
+                visitado [siguienteState] = nuevoCosto
+                colaPrioridad.push((siguienteState, nuevoAction, nuevoCosto), nuevoCosto)
+    return []
 
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
